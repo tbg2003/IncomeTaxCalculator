@@ -1,4 +1,5 @@
 
+import java.sql.ShardingKey
 import java.util.Locale
 
 class TaxCalculator {
@@ -74,10 +75,14 @@ class TaxCalculator {
     val totalIncome:Double = income + shareGains
 
     if (shareGains <= capitalGainAllowance) {0}
-    else if (shareGains >= capitalGainAllowance){
-      if(totalIncome > basicRateLimit){ (shareGains - capitalGainAllowance)*highRateNotProperty}
+    else if (shareGains > capitalGainAllowance){
+      if(isHigherRateTaxpayer(totalIncome)){ (shareGains - capitalGainAllowance)*highRateNotProperty}
       else {(shareGains - capitalGainAllowance)*basicRateNotProperty}
     } else{-1.0}
+  }
+
+  def totalTax(income:Double, shareGains:Double):Double = {
+    calculateTax(income) + shareTax(income, shareGains)
   }
 
 }
