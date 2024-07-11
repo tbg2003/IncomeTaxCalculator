@@ -59,7 +59,29 @@ class TaxCalculatorSpec extends AnyWordSpec {
       "the income is negative" in {
         assert(taxCalculator.formattedCurrentTaxAllowance(-100)=="£10,000.00")
       }
+    }
+  }
 
+  "TaxCalculator.shareTax" should {
+    "return the capital gain tax to pay " when {
+      "the share gains are below the capital gain allowance and total income > basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 60_000, shareGains = 2000) == 0.0)
+      }
+      "the share gains are below the capital gain allowance and total income < basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 25_000, shareGains = 2000) == 0.0)
+      }
+      "the share gains are equal to the capital gain allowance and total income > basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 60_000, shareGains = 3000) == 0.0)
+      }
+      "the share gains are equal to the capital gain allowance and total income < basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 25_000, shareGains = 3000) == 0.0)
+      }
+      "the share gains are > capital gain allowance and total income < basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 25_000, shareGains = 4000) == 100)
+      }
+      "the share gains are > the capital gain allowance and total income > basic tax limit" in {
+        assert(taxCalculator.shareTax(income = 60_000, shareGains = 4000) == 200)
+      }
     }
   }
 }
