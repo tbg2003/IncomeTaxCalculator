@@ -84,4 +84,65 @@ class TaxCalculatorSpec extends AnyWordSpec {
       }
     }
   }
+
+
+
+  "TaxCalculator.totalTax" should {
+    "return the income tax and capital gain tax to pay " when {
+
+// ################  INCOME <= PERSONAL ALLOWANCE  ################
+      "total income </= personal allowance and the share gains < capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 5000, shareGains = 2000) == 0.0)
+        assert(taxCalculator.totalTax(income = 10_000, shareGains = 2000) == 0.0)
+      }
+      "income </= personal allowance and the share gains = capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 5_000, shareGains = 3000) == 0.0)
+        assert(taxCalculator.totalTax(income = 10_000, shareGains = 3000) == 0.0)
+      }
+      "income </= personal allowance and the share gains > capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 5_000, shareGains = 4000) == 100.0)
+        assert(taxCalculator.totalTax(income = 10_000, shareGains = 4000) == 100.0)
+      }
+
+      // ################  INCOME <= BASIC TAX LIMIT  ################
+      "income </= basic tax limit and the share gains < capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 15_000, shareGains = 2000) == 1_000)
+        assert(taxCalculator.totalTax(income = 50_000, shareGains = 2000) == 8_000)
+      }
+      "income </= basic tax limit and the share gains = capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 15_000, shareGains = 3000) == 1_000)
+        assert(taxCalculator.totalTax(income = 50_000, shareGains = 3000) == 8_000)
+      }
+// ################  INCOME <= BASIC TAX LIMIT  &&  INCOME + CAPITAL GAINS >= BASIC TAX LIMIT ################
+      "income </= basic tax limit and the share gains > capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 15_000, shareGains = 4000) == 1_100)
+        assert(taxCalculator.totalTax(income = 50_000, shareGains = 4000) == 8_200)
+      }
+
+      // ################  INCOME <= HIGHER TAX LIMIT  ################
+      "income </= higher tax limit and the share gains < capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 60_000, shareGains = 2000) == 12_000)
+        assert(taxCalculator.totalTax(income = 125_000, shareGains = 2000) == 38_000)
+      }
+      "income </= higher tax limit and the share gains = capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 60_000, shareGains = 3000) == 12_000)
+        assert(taxCalculator.totalTax(income = 125_000, shareGains = 3000) == 38_000)
+      }
+      "income </= higher tax limit and the share gains > capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 60_000, shareGains = 4000) == 12_200)
+        assert(taxCalculator.totalTax(income = 125_000, shareGains = 4000) == 38_200)
+      }
+
+      // ################  INCOME > HIGHER TAX LIMIT  ################
+      "income > higher tax limit and the share gains < capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 130_000, shareGains = 2000) == 40_250)
+      }
+      "income > higher tax limit and the share gains = capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 130_000, shareGains = 3000) == 40_250)
+      }
+      "income > higher tax limit and the share gains > capital gain allowance" in {
+        assert(taxCalculator.totalTax(income = 130_000, shareGains = 4000) == 40_450)
+      }
+    }
+  }
 }
