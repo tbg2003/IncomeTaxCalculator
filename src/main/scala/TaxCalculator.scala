@@ -4,14 +4,8 @@ import java.util.Locale
 
 class TaxCalculator {
 
-  sealed trait CapitalGainType
-  case object Property extends CapitalGainType
-
   //  Tax bands for capital gain
   private val capitalGainAllowance: Int = 3000
-
-  private val basicRateProperty: Double = 0.18
-  private val highRateProperty: Double = 0.24
   private val basicRateNotProperty: Double = 0.1
   private val highRateNotProperty: Double = 0.2
 
