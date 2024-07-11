@@ -9,7 +9,7 @@ class TaxCalculatorSpec extends AnyWordSpec {
   "TaxCalculator.calculateTax" should {
     "return the total amount of tax to pay" when {
       "the income is below the personal tax limit" in {
-        val result: Double = taxCalculator.calculateTax(9000)
+        val result: Double = taxCalculator.calculateTax(9_000)
         assert(result == 0.0)
       }
       "the income is below the basic rate limit" in {
