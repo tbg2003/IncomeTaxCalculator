@@ -3,6 +3,18 @@ import java.util.Locale
 
 class TaxCalculator {
 
+  sealed trait CapitalGainType
+  case object Property extends CapitalGainType
+
+  //  Tax bands for capital gain
+  private val capitalGainAllowance: Int = 3000
+
+  private val basicRateProperty: Double = 0.18
+  private val highRateProperty: Double = 0.24
+  private val basicRateNotProperty: Double = 0.1
+  private val highRateNotProperty: Double = 0.2
+
+
   // Tax bands (simplified to make testing a bit easier)
   private val personalAllowance: Int = 10000
   private val basicRateLimit: Int = 50000
@@ -56,6 +68,16 @@ class TaxCalculator {
     else {
       "Error"
     }
+  }
+
+  def shareTax(income:Double, shareGains:Double):Double = {
+    val totalIncome:Double = income + shareGains
+
+    if (shareGains <= capitalGainAllowance) {0}
+    else if (shareGains >= capitalGainAllowance){
+      if(totalIncome > basicRateLimit){ (shareGains - capitalGainAllowance)*highRateNotProperty}
+      else {(shareGains - capitalGainAllowance)*basicRateNotProperty}
+    } else{-1.0}
   }
 
 }
